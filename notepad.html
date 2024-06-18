@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
+<body>
+    <script>
+        var app = angular.module("myShoppingList", []);
+        app.controller("myCtrl", function ($scope) {
+            $scope.products = [];
+            $scope.editIndex = -1;
+
+            $scope.addItem = function () {
+                $scope.errortext = "";
+                if (!$scope.addMe) { return; }
+                if ($scope.products.indexOf($scope.addMe) == -1) {
+                    $scope.products.push($scope.addMe);
+                    $scope.addMe = ""; // Clear the textarea after adding
+                } else {
+                    $scope.errortext = "The text is already in your notepad.";
+                }
+            };
+
+            $scope.removeItem = function (x) {
+                $scope.errortext = "";
+                $scope.products.splice(x, 1);
+            };
+
+            $scope.editItem = function (index) {
+                $scope.editIndex = index;
+                $scope.editMe = angular.copy($scope.products[index]);
+            };
+
+            $scope.saveItem = function (index) {
+                if (!$scope.editMe) { return; }
+                if ($scope.products.indexOf($scope.editMe) === -1 || $scope.products.indexOf($scope.editMe) === index) {
+                    $scope.products[index] = $scope.editMe;
+                    $scope.editIndex = -1;
+
+                } else {
+                    $scope.errortext = "The text is already in your notepad.";
+                }
+            };
+            $scope.cancelEdit = function () {
+                $scope.editIndex = -1;
+                $scope.editMe = "";
+            };
+        });
+    </script>
+
+    <div ng-app="myShoppingList" ng-cloak ng-controller="myCtrl" class="box" style="max-width:400px;">
+        <header class="header">
+            <b style="font-size: xx-large;">NotePad</b>
+        </header>
+
+        <div>
+            <div>
+                <textarea placeholder="Add your notes" ng-model="addMe"
+                    class="w3-input w3-border w3-padding inputtext"></textarea>
+                <button ng-click="addItem()" class="add">Add</button>
+            </div>
+            <p>{{errortext}}</p>
+        </div>
+
+        <div>
+            <ul>
+                <li ng-repeat="x in products" class="note">
+                    <div ng-if="editIndex !== $index">
+                        <span ng-click="removeItem($index)" style="cursor:pointer;" class="close-btn">×</span>
+                        <span ng-click="editItem($index)" style="cursor:pointer;" class="edit-btn">✎</span>
+                        {{x}}
+                    </div>
+                    <div ng-if="editIndex === $index">
+                        <textarea ng-model="editMe" class="w3-input w3-border w3-padding inputtext"></textarea>
+                        <button ng-click="saveItem($index)" class="save">Save</button>
+                        <button ng-click="cancelEdit()" class="cancel">Cancel</button>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</body>
+
+</html>
